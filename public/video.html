@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Streaming Latency</title>
+  <style>
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Video Streaming Latency</h1>
+  <div id="info"></div>
+  <video id="video" width="640" height="480" controls>
+    <source src="/output_video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const startTime = parseInt(urlParams.get('start'));
+      const endTime = parseInt(urlParams.get('end'));
+      const loadTime = endTime - startTime;
+
+      const infoDiv = document.getElementById('info');
+      infoDiv.innerText = `Conversion Load Time: ${loadTime} ms`;
+
+      const video = document.getElementById('video');
+      let dataLoadTime;
+
+      video.addEventListener('loadeddata', () => {
+        const currentTime = Date.now();
+        dataLoadTime = currentTime - endTime;
+        infoDiv.innerText += `, Data Load Time: ${dataLoadTime} ms`;
+      });
+
+      video.addEventListener('playing', () => {
+        const currentTime = Date.now();
+        const displayTime = currentTime - endTime;
+        const totalDelay = currentTime - startTime;
+        infoDiv.innerText += `, Display Delay: ${displayTime} ms, Total Delay: ${totalDelay} ms`;
+      });
+    });
+  </script>
+</body>
+</html>
